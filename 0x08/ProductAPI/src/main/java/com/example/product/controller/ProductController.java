@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api-product/products")
 public class ProductController {
+    
 
     @Autowired
     private ProductRepository productRepository;
@@ -23,7 +24,7 @@ public class ProductController {
     }
 
 
-    @ApiOperation(value="Retorna um lista de produtos")
+    @ApiOperation(value="Responsável por retornar uma lista de produtos.")
     @ApiResponse(code = 11, message = "Warning - the process returned more than 1000 products")
     @GetMapping("/allProducts")
     public String allProducts(){
