@@ -1,64 +1,85 @@
-package com.example.calculator.model;
+package com.example.calculator.controller;
 
-import java.time.LocalDate;
+import com.example.calculator.model.Calculator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import static java.time.temporal.ChronoUnit.DAYS;
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(CalculatorController.class)
+public class CalculatorControllerTest {
 
-public class Calculator {
+    @Autowired
+    private MockMvc mvc;
 
-    public Double sum(Double number1, Double number2) {
-        if(number1 == null || number2 == null){
-            throw new NullPointerException("Número 1 e número 2 são obrigatórios.");
-        }
-        return number1 + number2;
+    @BeforeEach
+    public static void setup() {
+        Calculator calculator = new Calculator();
     }
 
-    public Double sub(Double number1, Double number2) {
-        if(number1 == null || number2 == null){
-            throw new NullPointerException("Número 1 e número 2 são obrigatórios.");
-        }
-        return number1 - number2;
+    @Test
+    void messageWelcome() throws Exception {
+        RequestBuilder request = get("/calculator/welcome");
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("Bem vindo à CALCULATOR API REST.", result.getResponse().getContentAsString());
     }
 
-    public Double divide (Double number1, Double number2)  {
-        if(number1 == null || number2 == null){
-            throw new NullPointerException("Número 1 e número 2 são obrigatórios.");
-        }
-
-        if(number1 == 0 || number2 == 0){
-            throw new ArithmeticException("Divisão por zero não é permitido.");
-        }
-
-        return number1 / number2;
+    @Test
+    void addNumbers() throws Exception {
+        RequestBuilder request = get("/calculator/addNumbers?number1=" + 80 + "&number2=" + 70);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("130", result.getResponse().getContentAsString());
     }
 
-    public Integer factorial(Integer factorial) {
-        if (factorial == null) {
-            throw new NullPointerException("Número é obrigatório.");
-        }
-
-        for (int i = 1; true; i ++ ) {
-            factorial *= i;
-        }
+    @Test
+    void subNumbers() throws Exception {
+        RequestBuilder request = get("/calculator/subNumbers?number1=" + 80 + "&number2=" + 70);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("10", result.getResponse().getContentAsString());
     }
 
-    public Integer integerToBinary(Integer integer) {
-        return Integer.parseInt(Integer.toBinaryString(integer));
-
+    @Test
+    void divideNumbers() throws Exception {
+        RequestBuilder request = get("/calculator/divideNumbers?number1=" + 80 + "&number2=" + 70);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("1.14", result.getResponse().getContentAsString());
     }
 
-    public String integerToHexadecimal(Integer integer) {
-        return Integer.toHexString(integer);
+    @Test
+    void factorial() throws Exception {
+        RequestBuilder request = get("/calculator/factorial?factorial=" + 10);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("240", result.getResponse().getContentAsString());
     }
 
-    public int calculeDayBetweenDate(LocalDate date1, LocalDate date2) {
-        LocalDate dateBefore = date1;
-        LocalDate dateAfter = date2;
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
-        return (int) daysBetween;
+    @Test
+    void calculeDayBetweenDate() throws Exception {
+        RequestBuilder request = get("/calculator/calculeDayBetweenDate?localDate1=" + "2022-04-05" + "&localDate2=" + "2022-04-10");
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("10", result.getResponse().getContentAsString());
     }
 
+    @Test
+    void integerToBinary() throws Exception {
+        RequestBuilder request = get("/calculator/integerToBinary?number1=" + 5);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("101", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    void integerToHexadecimal() throws Exception {
+        RequestBuilder request = get("/calculator/integerToHexadecimal?number1=" + 170);
+        MvcResult result = mvc.perform(request).andReturn();
+        assertEquals("AA", result.getResponse().getContentAsString().toUpperCase());
+    }
 }
-
 
